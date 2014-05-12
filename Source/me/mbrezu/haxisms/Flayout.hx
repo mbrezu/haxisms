@@ -24,8 +24,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 package me.mbrezu.haxisms;
+import flash.display.DisplayObject;
 import flash.geom.Rectangle;
 import me.mbrezu.haxisms.Flayout.Layout;
+import flash.display.Sprite;
 
 enum Alignment {
     TopLeft;
@@ -37,6 +39,7 @@ enum Alignment {
     BottomLeft;
     BottomCenter;
     BottomRight;
+    Stretch;
 }
 
 class Layout {
@@ -46,6 +49,7 @@ class Layout {
     public var parent(default, null): Layout;
     public var remainingArea(default, null): Rectangle;
     public var quantity: Float;
+    public var debugSprite(default, default): Sprite;
     
     private function new(area: Rectangle, id: String = "", parent: Layout = null) {
         this.area = area;
@@ -98,9 +102,8 @@ class Layout {
         return child;
     }
     
-    public function reset() {
+    public function resetArea() {
         remainingArea = area;
-        children = [];
         return this;
     }
     
@@ -247,8 +250,35 @@ class Layout {
                 result.y += (area.height - result.height);
                 result.x += (area.width - result.width);
             }
+            case Stretch: {
+                result.copyFrom(area);
+            }
+        }
+        var dbg = root().debugSprite;
+        if (dbg != null) {
+            dbg.graphics.lineStyle(1);
+            dbg.graphics.drawRect(area.x, area.y, area.width, area.height);
+            dbg.graphics.drawRect(result.x, result.y, result.width, result.height);        
         }
         return result;
     }    
     
+    public function fitSprite(
+        spr: DisplayObject, 
+        maxWidth: Int = 0, maxHeight: Int = 0, align: Alignment = null ) 
+    {
+        trace("*** fitSprite", id);
+        spr.scaleX = 1;
+        spr.scaleY = 1;
+        var size = { width: spr.width, height: spr.height };
+        trace("size", size);
+        var rect = fitInto(size, maxWidth, maxHeight, align);
+        trace("layout", rect);
+        var factorX = rect.width / spr.width;
+        var factorY = rect.height / spr.height;
+        spr.scaleX = factorX;
+        spr.scaleY = factorY;
+        spr.x = rect.x;
+        spr.y = rect.y;
+    }
 }
