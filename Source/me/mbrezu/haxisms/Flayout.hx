@@ -98,6 +98,12 @@ class Layout {
         return child;
     }
     
+    public function reset() {
+        remainingArea = area;
+        children = [];
+        return this;
+    }
+    
     public function right() {
         spaceCheck();
         var ra = remainingArea;
@@ -159,7 +165,7 @@ class Layout {
     }
     
     public function height(percent: Float) {
-        quantity = area.height * percent;        
+        quantity = area.height * percent;  
         return this;
     }
     
@@ -179,6 +185,32 @@ class Layout {
         } else {
             return parent.root();
         }
+    }
+    
+    private function offset(dx: Float, dy: Float) {
+        area.x += dx;
+        area.y += dy;
+        if (remainingArea != null && remainingArea != area) {
+            remainingArea.x += dx;
+            remainingArea.y += dy;
+        }
+        return this;
+    }
+    
+    public function moveLeft() {
+        return offset( -quantity, 0);
+    }
+    
+    public function moveUp() {
+        return offset( 0, -quantity);
+    }
+    
+    public function moveRight() {
+        return offset(quantity, 0);
+    }
+    
+    public function moveDown() {
+        return offset(0, quantity);
     }
     
     public function fitInto(

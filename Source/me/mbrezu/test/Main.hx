@@ -192,6 +192,15 @@ class TestLayout extends TestCase {
         var result2 = btn1.fitInto( { width: 48, height: 48 }, 64 );
         assertTrue(recteq(result2, new Rectangle(20, 17.6, 64, 64)));
     }
+    
+    public function testMove() {
+        var layout = Layout.make(new Rectangle(0, 0, 320, 480))
+            .height(0.5).top()
+                .height(0.5).moveUp().name("tested")
+                .parent;
+        assertTrue(recteq(layout.area, new Rectangle(0, 0, 320, 480)));
+        assertTrue(recteq(layout.findById("tested").area, new Rectangle(0, -120, 320, 240)));
+    }
 }
 
 class TestJson extends TestCase {
