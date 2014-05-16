@@ -201,6 +201,18 @@ class TestLayout extends TestCase {
         assertTrue(recteq(layout.area, new Rectangle(0, 0, 320, 480)));
         assertTrue(recteq(layout.findById("tested").area, new Rectangle(0, -120, 320, 240)));
     }
+    
+    public function testAspectRatio() {
+        var layout = Layout.make(new Rectangle(0, 0, 320, 480))
+            .centerAspectRatio(100, 100).name("tested").parent;
+        assertTrue(recteq(layout.area, new Rectangle(0, 0, 320, 480)));
+        assertTrue(recteq(layout.findById("tested").area, new Rectangle(0, 80, 320, 320)));
+
+        layout = Layout.make(new Rectangle(0, 0, 320, 480))
+            .centerAspectRatio(100, 200).name("tested").parent;
+        assertTrue(recteq(layout.area, new Rectangle(0, 0, 320, 480)));
+        assertTrue(recteq(layout.findById("tested").area, new Rectangle(40, 0, 240, 480)));
+    }
 }
 
 class TestJson extends TestCase {

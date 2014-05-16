@@ -190,6 +190,21 @@ class Layout {
         }
     }
     
+    public function centerAspectRatio(w: Float, h: Float) {
+        spaceCheck();
+        var ar1 = w / h;
+        var ar2 = remainingArea.width / remainingArea.height;
+        if (ar2 < ar1) {
+            var y = (remainingArea.height - remainingArea.width / ar1) / 2;
+            return pixels(y).top().parent.bottom().parent.middle();
+        } else if (ar2 > ar1) {
+            var x = (remainingArea.width - ar1 * remainingArea.height) / 2;
+            return pixels(x).left().parent.right().parent.middle();
+        } else {
+            return this;
+        }
+    }
+    
     private function offset(dx: Float, dy: Float) {
         area.x += dx;
         area.y += dy;
@@ -265,20 +280,25 @@ class Layout {
     
     public function fitSprite(
         spr: DisplayObject, 
-        maxWidth: Int = 0, maxHeight: Int = 0, align: Alignment = null ) 
+        maxWidth: Float = 0, maxHeight: Float = 0, align: Alignment = null ) 
     {
-        trace("*** fitSprite", id);
+        //trace("*** fitSprite", id);
         spr.scaleX = 1;
         spr.scaleY = 1;
         var size = { width: spr.width, height: spr.height };
-        trace("size", size);
+        //trace("size", size);
         var rect = fitInto(size, maxWidth, maxHeight, align);
-        trace("layout", rect);
+        //trace("layout", rect);
         var factorX = rect.width / spr.width;
         var factorY = rect.height / spr.height;
         spr.scaleX = factorX;
         spr.scaleY = factorY;
         spr.x = rect.x;
         spr.y = rect.y;
+    }
+    
+    public function debug(debugSprite: Sprite) {
+        this.debugSprite = debugSprite;
+        return this;
     }
 }
