@@ -32,6 +32,8 @@ import haxe.unit.TestCase;
 import haxe.unit.TestRunner;
 import me.mbrezu.haxisms.Json;
 import me.mbrezu.haxisms.Flayout;
+import me.mbrezu.haxisms.Random;
+import me.mbrezu.haxisms.Random.SeedableRng;
 
 class Main extends Sprite {
 	public function new () {
@@ -40,20 +42,19 @@ class Main extends Sprite {
         r.add(new TestJson());
         r.add(new TestLayout());
         r.run();
+        
+        var r = new Random(1010);
+        var buckets = new Array<Int>();
+        for (i in 0...10) {
+            buckets.push(0);
+        }
+        for (i in 0...1000000) {
+            var n = r.int(0, 9);
+            buckets[n]++;
+        }
+        trace(buckets);
 	}
-    
-    function testLayout() {
-        var layout = Layout.make(new Rectangle(0, 0, 320, 480))
-            .pixels(100).left().name("foo").parent
-            .pixels(100).left().name("bar").parent
-            .middle().name("baz").parent
-            .root();
-        trace(layout.area);
-        trace(layout.findById("foo").area);
-        trace(layout.findById("bar").area);
-        trace(layout.findById("baz").area);
-    }
-    
+       
 }
 
 // TODO: formatter tests
