@@ -50,6 +50,7 @@ class Layout {
     public var remainingArea(default, null): Rectangle;
     public var quantity: Float;
     public var debugSprite(default, default): Sprite;
+    private var reduce: Bool;
     
     private function new(area: Rectangle, id: String = "", parent: Layout = null) {
         this.area = area;
@@ -60,6 +61,7 @@ class Layout {
         if (parent != null) {
             parent.children.push(this);
         }
+        reduce = true;
     }
     
     public function findById(id: String) {
@@ -95,9 +97,9 @@ class Layout {
         var ra = remainingArea;
         var child = make(new Rectangle(ra.x, ra.y, quantity, ra.height), "", this);
         if (ra.width - quantity <= 0) {
-            remainingArea = null;
+            setRemainingArea(null);
         } else {
-            remainingArea = new Rectangle(ra.x + quantity, ra.y, ra.width - quantity, ra.height);
+            setRemainingArea(new Rectangle(ra.x + quantity, ra.y, ra.width - quantity, ra.height));
         }
         return child;
     }
@@ -112,9 +114,9 @@ class Layout {
         var ra = remainingArea;
         var child = make(new Rectangle(ra.x + ra.width - quantity, ra.y, quantity, ra.height), "", this);
         if (ra.width - quantity <= 0) {
-            remainingArea = null;            
+            setRemainingArea(null);            
         } else {
-            remainingArea = new Rectangle(ra.x, ra.y, ra.width - quantity, ra.height);
+            setRemainingArea(new Rectangle(ra.x, ra.y, ra.width - quantity, ra.height));
         }
         return child;
     }
@@ -124,11 +126,24 @@ class Layout {
         var ra = remainingArea;
         var child = make(new Rectangle(ra.x, ra.y, ra.width, quantity), "", this);
         if (ra.height - quantity <= 0) {
-            remainingArea = null;            
+            setRemainingArea(null);            
         } else {
-            remainingArea = new Rectangle(ra.x, ra.y + quantity, ra.width, ra.height - quantity);
+            setRemainingArea(new Rectangle(ra.x, ra.y + quantity, ra.width, ra.height - quantity));
         }
         return child;
+    }
+    
+    public function dontReduceNext() {
+        reduce = false;
+        return this;
+    }
+    
+    private function setRemainingArea(newArea: Rectangle) {
+        if (reduce) {
+            remainingArea = newArea;
+        } else {
+            reduce = true;
+        }
     }
     
     public function bottom() {
@@ -136,16 +151,16 @@ class Layout {
         var ra = remainingArea;
         var child = make(new Rectangle(ra.x, ra.y + ra.height - quantity, ra.width, quantity), "", this);
         if (ra.height - quantity <= 0) {
-            remainingArea = null;            
+            setRemainingArea(null);
         } else {
-            remainingArea = new Rectangle(ra.x, ra.y, ra.width, ra.height - quantity);
+            setRemainingArea(new Rectangle(ra.x, ra.y, ra.width, ra.height - quantity));
         }
         return child;
     }
     
     public function middle() {
         var child = make(remainingArea, "", this);
-        remainingArea = null;
+        setRemainingArea(null);
         return child;
     }
     
