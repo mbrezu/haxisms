@@ -60,16 +60,14 @@ class Cooldown {
 	var interval: Float;
 	var time: Float;
 
-	private function new(interval: Float) {
+	public function new(interval: Float) {
 		this.time = 0;
         this.interval = interval;
 	}
 	
 	public function hot() {
-        if (cs != null) {
-            interval = cs.getFloat(ct);
-        }
         time = interval;
+        return this;
 	}
 	
 	public function update(deltaTime: Float) {
@@ -77,6 +75,7 @@ class Cooldown {
 		if (time < 0.0) {
 			time = 0.0;
 		}
+        return this;
 	}
 	
 	public function isCool() {
