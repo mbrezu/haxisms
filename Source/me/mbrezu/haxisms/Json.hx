@@ -366,10 +366,22 @@ class Js {
             return { type: Comma, pos: js.getPosition() - 1 };
         } else if (c == ':'.code) {
             return { type: Colon, pos: js.getPosition() - 1 };
+        } else if (c == '/'.code) {
+			// Minor extension to the JSON standard :-)
+			consumeComment(js);
+			return nextTokenImpl(js);
         } else {
             throw "Parse error.";
         }
     }
+	
+	static private function consumeComment(js: IReader) {
+		while (true) {
+			if (js.readChar() == '\n'.code) {
+				break;
+			}
+		}
+	}
     
     static private function stringToken(js:IReader, c: Int) 
     {
